@@ -1,0 +1,29 @@
+{
+  "name": "agent-trust-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Decentralized trust layer for AI agent ecosystems",
+  "keywords": ["ai", "agents", "trust", "did", "verifiable-credentials"],
+  "license": "Apache-2.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "lerna run build",
+    "test": "lerna run test",
+    "lint": "lerna run lint",
+    "clean": "lerna run clean",
+    "dev": "lerna run dev --parallel"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "typescript": "^5.0.0",
+    "lerna": "^7.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

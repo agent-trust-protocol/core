@@ -24,19 +24,46 @@ The Agent Trust Protocol (ATP) establishes a trust layer for AI agent ecosystems
 
 ## 🚀 Quick Start
 
+### Option 1: Docker Compose (Recommended)
+
 ```bash
 # Clone the repository
 git clone https://github.com/agent-trust-protocol/atp.git
-cd atp
+cd agent-trust-protocol
 
+# Start all services
+docker-compose up -d
+
+# Verify services are running
+curl http://localhost:3000/health
+
+# Register your first agent DID
+curl -X POST http://localhost:3001/identity/register
+```
+
+### Option 2: Development Setup
+
+```bash
 # Install dependencies
 npm install
 
-# Run the identity service
-npm run start:identity
+# Build all packages
+npm run build
 
-# Register your first agent DID
-curl -X POST http://localhost:3000/identity/register
+# Start services individually
+npm run dev --workspace=@atp/identity-service &
+npm run dev --workspace=@atp/vc-service &
+npm run dev --workspace=@atp/permission-service &
+npm run dev --workspace=@atp/rpc-gateway &
+
+# Run example agents
+cd examples/simple-agent
+npm run dev weather &
+npm run dev calculator &
+
+# Run demo workflow
+cd ../demo-workflow
+npm run demo
 ```
 
 ## 🏗️ Architecture

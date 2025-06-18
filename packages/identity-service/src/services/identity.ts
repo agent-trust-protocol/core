@@ -1,0 +1,104 @@
+import { DIDDocument, DIDRegistrationRequest, DIDRegistrationResponse, Service } from '../models/did.js';
+import { CryptoUtils } from '../utils/crypto.js';
+import { StorageService } from './storage.js';
+
+export class IdentityService {
+  constructor(private storage: StorageService) {}
+
+  async registerDID(request: DIDRegistrationRequest = {}): Promise<DIDRegistrationResponse> {
+    const keyPair = request.publicKey 
+      ? { publicKey: request.publicKey, privateKey: '' }
+      : await CryptoUtils.generateKeyPair();
+    
+    const did = CryptoUtils.generateDID(keyPair.publicKey);
+    const now = new Date().toISOString();
+    
+    const verificationMethodId = `${did}#key-1`;
+    
+    const document: DIDDocument = {
+      '@context': ['https://www.w3.org/ns/did/v1', 'https://w3id.org/security/suites/ed25519-2020/v1'],
+      id: did,
+      verificationMethod: [{
+        id: verificationMethodId,
+        type: 'Ed25519VerificationKey2020',
+        controller: did,
+        publicKeyMultibase: CryptoUtils.encodeMultibase(Buffer.from(keyPair.publicKey, 'hex')),
+      }],
+      authentication: [verificationMethodId],
+      assertionMethod: [verificationMethodId],
+      keyAgreement: [verificationMethodId],
+      capabilityInvocation: [verificationMethodId],
+      capabilityDelegation: [verificationMethodId],
+      service: request.services || [],
+      created: now,
+      updated: now,
+    };
+
+    await this.storage.storeDIDDocument(document);
+    
+    if (!request.publicKey) {
+      await this.storage.storeKeyPair({
+        did,
+        publicKey: keyPair.publicKey,
+        privateKey: keyPair.privateKey,
+        created: now,
+      });
+    }
+
+    return {
+      did,
+      document,
+      privateKey: request.publicKey ? undefined : keyPair.privateKey,
+    };
+  }
+
+  async resolveDID(did: string): Promise<DIDDocument | null> {
+    return await this.storage.getDIDDocument(did);
+  }
+
+  async rotateKeys(did: string): Promise<DIDDocument | null> {
+    const existingDoc = await this.storage.getDIDDocument(did);
+    if (!existingDoc) {
+      return null;
+    }
+
+    const newKeyPair = await this.storage.rotateKey(did);
+    const now = new Date().toISOString();
+    
+    const verificationMethodId = `${did}#key-1`;
+    
+    const updatedDocument: DIDDocument = {
+      ...existingDoc,
+      verificationMethod: [{
+        id: verificationMethodId,
+        type: 'Ed25519VerificationKey2020',
+        controller: did,
+        publicKeyMultibase: CryptoUtils.encodeMultibase(Buffer.from(newKeyPair.publicKey, 'hex')),
+      }],
+      updated: now,
+    };
+
+    await this.storage.storeDIDDocument(updatedDocument);
+    return updatedDocument;
+  }
+
+  async addService(did: string, service: Service): Promise<DIDDocument | null> {
+    const existingDoc = await this.storage.getDIDDocument(did);
+    if (!existingDoc) {
+      return null;
+    }
+
+    const updatedDocument: DIDDocument = {
+      ...existingDoc,
+      service: [...existingDoc.service, service],
+      updated: new Date().toISOString(),
+    };
+
+    await this.storage.storeDIDDocument(updatedDocument);
+    return updatedDocument;
+  }
+
+  async listDIDs(): Promise<string[]> {
+    return await this.storage.listDIDs();
+  }
+}

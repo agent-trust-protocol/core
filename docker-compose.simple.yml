@@ -1,0 +1,20 @@
+services:
+  identity-service:
+    build:
+      context: .
+      dockerfile: docker/simple-identity.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - DB_PATH=/data/identity.db
+    volumes:
+      - identity_data:/data
+    restart: unless-stopped
+
+volumes:
+  identity_data:
+
+networks:
+  default:
+    name: atp-simple-network
