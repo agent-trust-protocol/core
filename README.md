@@ -525,8 +525,8 @@ npm run test
 <p align="center">
   <b>Securing the Agentic Web, One Trust Relationship at a Time</b><br>
   <a href="https://github.com/agent-trust-protocol/atp">⭐ Star us on GitHub</a> •
-  <a href="https://atp.dev">📖 Read the Docs</a> •
-  <a href="https://discord.gg/atp">💬 Join Discord</a>
+  <a href="https://agenttrust.dev">📖 Read the Docs</a> •
+  <a href=https://discord.com/channels/1388272814645186740/1388272815446163478">💬 Join Discord</a>
 </p>
 
 <p align="center">
