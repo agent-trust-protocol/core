@@ -533,4 +533,4 @@ npm run test
   <img src="assets/images/atp-favicon-logo-agent.png" alt="ATP Agent Logo" width="100"/>
 </p>
 
-*Created by Larry Lewis, Sovr INC DBA SovrLabs*
+*Created by Larry Lewis, Co-Founder & CTO Hierloom|Founder of Sovr INC*
