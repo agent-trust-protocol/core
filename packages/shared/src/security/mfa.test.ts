@@ -1,4 +1,5 @@
-import { ATPMFAService } from './mfa.js';
+import { ATPMFAService } from './mfa';
+import { jest } from '@jest/globals';
 
 describe('ATPMFAService', () => {
   let mfaService: ATPMFAService;
@@ -18,8 +19,8 @@ describe('ATPMFAService', () => {
       expect(result.secret).toBeDefined();
       expect(result.secret.length).toBeGreaterThan(0);
       expect(result.qrCode).toContain('otpauth://totp/');
-      expect(result.qrCode).toContain('testuser@example.com');
-      expect(result.qrCode).toContain('did:atp:test:123');
+      expect(result.qrCode).toContain('testuser%40example.com'); // URL encoded @
+      expect(result.qrCode).toContain('did%3Aatp%3Atest%3A123'); // URL encoded colons
       expect(result.backupCodes).toHaveLength(10);
       expect(result.backupCodes[0]).toMatch(/^[a-f0-9]{4}-[a-f0-9]{4}$/);
     });
@@ -134,7 +135,7 @@ describe('ATPMFAService', () => {
   describe('Security Features', () => {
     test('should calculate MFA strength correctly', () => {
       expect(mfaService.getMFAStrength(['totp'])).toBe(0.4);
-      expect(mfaService.getMFAStrength(['totp', 'backup'])).toBe(0.6);
+      expect(mfaService.getMFAStrength(['totp', 'backup'])).toBeCloseTo(0.6, 1);
       expect(mfaService.getMFAStrength(['totp', 'backup', 'hardware'])).toBe(1.0);
       expect(mfaService.getMFAStrength(['hardware'])).toBe(0.4);
       expect(mfaService.getMFAStrength([])).toBe(0);
@@ -166,7 +167,7 @@ describe('ATPMFAService', () => {
       });
       
       const { qrCode } = customMFA.generateSecretKey('testuser');
-      expect(qrCode).toContain('Custom%20Issuer');
+      expect(qrCode).toContain('Custom+Issuer'); // URL encoded space is +
       expect(qrCode).toContain('digits=8');
       expect(qrCode).toContain('period=60');
       

@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import https from 'https';
 import { IncomingMessage } from 'http';
 import { DIDCertificateAuthority, DIDCertificate } from './did-ca.js';

@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { AuthMessage } from '../models/rpc.js';
 import { DIDJWTPayload } from './did-jwt.js';
 import { MTLSService, ClientCertificate } from './mtls.js';

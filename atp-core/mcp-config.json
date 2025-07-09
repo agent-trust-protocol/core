@@ -1,0 +1,17 @@
+{
+  "mcpTools": {
+    "search": "http://localhost:8080/mcp/search",
+    "calculator": "http://localhost:8081/mcp/calc",
+    "weather": "http://localhost:8082/mcp/weather",
+    "translator": "http://localhost:8083/mcp/translate"
+  },
+  "security": {
+    "minimumTrustScore": 25,
+    "requireQuantumSafe": false,
+    "auditRetentionDays": 30
+  },
+  "rateLimit": {
+    "maxRequestsPerMinute": 60,
+    "maxRequestsPerHour": 1000
+  }
+}

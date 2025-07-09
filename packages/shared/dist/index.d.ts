@@ -3,4 +3,6 @@ export * from './crypto-setup.js';
 export * from './encryption.js';
 export * from './database/index.js';
 export * from './security/index.js';
+export * from './crypto/pqc-crypto.js';
+export * from './monitoring/metrics.js';
 //# sourceMappingURL=index.d.ts.map

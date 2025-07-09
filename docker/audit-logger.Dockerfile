@@ -9,7 +9,7 @@ RUN apk add --no-cache python3 python3-dev py3-setuptools make g++
 COPY package.json package-lock.json lerna.json ./
 COPY packages/shared/package.json ./packages/shared/
 COPY packages/audit-logger/package.json ./packages/audit-logger/
-RUN npm ci
+RUN npm install
 
 # Copy source code and build
 COPY packages/shared ./packages/shared
@@ -19,7 +19,7 @@ RUN npm run build --workspace=@atp/shared
 RUN npm run build --workspace=@atp/audit-logger
 
 # Install production dependencies only
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Production stage
 FROM node:18-alpine AS production

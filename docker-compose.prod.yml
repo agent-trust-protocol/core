@@ -1,0 +1,251 @@
+# 🛡️ Agent Trust Protocol™ - Production Docker Compose
+# Enhanced production configuration with secrets management
+
+version: '3.8'
+
+services:
+  # Production PostgreSQL with secrets
+  postgres:
+    image: postgres:15-alpine
+    container_name: atp-postgres-prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: atp_production
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - atp-network
+    secrets:
+      - postgres_user
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$(cat /run/secrets/postgres_user) -d atp_production"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Production Redis with authentication
+  redis:
+    image: redis:7-alpine
+    container_name: atp-redis-prod
+    restart: unless-stopped
+    command: redis-server --requirepass $$(cat /run/secrets/redis_password) --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - atp-network
+    secrets:
+      - redis_password
+    healthcheck:
+      test: ["CMD", "redis-cli", "--no-auth-warning", "-a", "$$(cat /run/secrets/redis_password)", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Enhanced Quantum-Safe Server for Production
+  quantum-safe-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atp-quantum-safe-server-prod
+    restart: unless-stopped
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=production
+      - PORT=3008
+      - ATP_LOG_LEVEL=info
+      - ATP_QUANTUM_SAFE=true
+      - ATP_TRUST_LEVELS=basic,verified,enterprise
+      - ATP_RATE_LIMIT_ENABLED=true
+      - ATP_METRICS_ENABLED=true
+      - ATP_AUDIT_ENABLED=true
+      - DATABASE_URL_FILE=/run/secrets/database_url
+      - REDIS_URL_FILE=/run/secrets/redis_url
+      - JWT_SECRET_FILE=/run/secrets/jwt_secret
+      - ATP_ENCRYPTION_KEY_FILE=/run/secrets/encryption_key
+    volumes:
+      - atp_logs:/app/logs
+      - atp_data:/app/data
+    networks:
+      - atp-network
+    secrets:
+      - database_url
+      - redis_url
+      - jwt_secret
+      - encryption_key
+      - atp_license_key
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  # Production Nginx with SSL
+  nginx:
+    image: nginx:alpine
+    container_name: atp-nginx-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - quantum-safe-server
+    networks:
+      - atp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: atp-prometheus-prod
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.prod.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus_data:/prometheus
+    networks:
+      - atp-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+
+  # Grafana for dashboards
+  grafana:
+    image: grafana/grafana:latest
+    container_name: atp-grafana-prod
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD__FILE=/run/secrets/grafana_password
+      - GF_SECURITY_SECRET_KEY__FILE=/run/secrets/grafana_secret
+      - GF_DATABASE_TYPE=postgres
+      - GF_DATABASE_HOST=postgres:5432
+      - GF_DATABASE_NAME=grafana
+      - GF_DATABASE_USER__FILE=/run/secrets/postgres_user
+      - GF_DATABASE_PASSWORD__FILE=/run/secrets/postgres_password
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    networks:
+      - atp-network
+    secrets:
+      - grafana_password
+      - grafana_secret
+      - postgres_user
+      - postgres_password
+    depends_on:
+      - postgres
+      - prometheus
+
+  # Log aggregation with Loki
+  loki:
+    image: grafana/loki:latest
+    container_name: atp-loki-prod
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki.yml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+    networks:
+      - atp-network
+    command: -config.file=/etc/loki/local-config.yaml
+
+  # Log shipping with Promtail
+  promtail:
+    image: grafana/promtail:latest
+    container_name: atp-promtail-prod
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/promtail/promtail.yml:/etc/promtail/config.yml:ro
+      - atp_logs:/var/log/atp:ro
+      - nginx_logs:/var/log/nginx:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - atp-network
+    depends_on:
+      - loki
+    command: -config.file=/etc/promtail/config.yml
+
+# Docker secrets for production
+secrets:
+  postgres_user:
+    external: true
+  postgres_password:
+    external: true
+  redis_password:
+    external: true
+  database_url:
+    external: true
+  redis_url:
+    external: true
+  jwt_secret:
+    external: true
+  encryption_key:
+    external: true
+  atp_license_key:
+    external: true
+  grafana_password:
+    external: true
+  grafana_secret:
+    external: true
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  atp_logs:
+    driver: local
+  atp_data:
+    driver: local
+  nginx_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  loki_data:
+    driver: local
+
+networks:
+  atp-network:
+    driver: bridge
+    name: atp-network-prod

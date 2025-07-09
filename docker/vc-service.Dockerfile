@@ -10,7 +10,7 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/vc-service/package.json ./packages/vc-service/
 
 # Install all dependencies (including dev for building)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY packages/shared ./packages/shared

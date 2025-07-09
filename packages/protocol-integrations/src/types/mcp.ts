@@ -41,6 +41,8 @@ export const ATPMCPToolSchema = z.object({
     requestsPerMinute: z.number().optional(),
     requestsPerHour: z.number().optional(),
   }).optional(),
+  // Quantum-safe signature for tool verification
+  signature: z.string().optional(),
 });
 
 // ATP™ Enhanced MCP Resource Definition

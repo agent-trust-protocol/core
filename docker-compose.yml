@@ -86,11 +86,9 @@ services:
     ports:
       - "3006:3006"
       - "3007:3007"
-      - "3008:3008"
     environment:
       - PORT=3006
       - MCP_PORT=3007
-      - A2A_PORT=3008
     depends_on:
       - identity-service
       - audit-logger
@@ -100,6 +98,34 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+
+  # 🛡️ Quantum-Safe MCP Server - Production Ready
+  quantum-safe-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: atp-quantum-safe-server
+    ports:
+      - "3008:3008"
+    environment:
+      - NODE_ENV=production
+      - PORT=3008
+      - ATP_LOG_LEVEL=info
+      - ATP_QUANTUM_SAFE=true
+      - ATP_TRUST_LEVELS=basic,verified,enterprise
+      - ATP_RATE_LIMIT_ENABLED=true
+    depends_on:
+      - identity-service
+      - audit-logger
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3008/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    labels:
+      - "description=ATP Quantum-Safe MCP Server - World's First Quantum-Safe AI Agent Protocol"
 
   rpc-gateway:
     build:

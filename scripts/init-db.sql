@@ -30,6 +30,12 @@ CREATE TABLE IF NOT EXISTS atp_identity.agents (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     did VARCHAR(255) UNIQUE NOT NULL,
     public_key TEXT NOT NULL,
+    -- Quantum-safe key fields
+    pqc_public_key TEXT,
+    algorithm VARCHAR(50) NOT NULL DEFAULT 'ed25519',
+    is_quantum_safe BOOLEAN NOT NULL DEFAULT FALSE,
+    hybrid_mode BOOLEAN NOT NULL DEFAULT FALSE,
+    supported_algorithms TEXT[] DEFAULT ARRAY['ed25519'],
     trust_level VARCHAR(50) NOT NULL DEFAULT 'BASIC',
     metadata JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -44,6 +50,26 @@ CREATE TABLE IF NOT EXISTS atp_identity.did_documents (
     version INTEGER DEFAULT 1,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enhanced key storage for quantum-safe keys
+CREATE TABLE IF NOT EXISTS atp_identity.key_pairs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    did VARCHAR(255) NOT NULL REFERENCES atp_identity.agents(did) ON DELETE CASCADE,
+    -- Classical keys
+    private_key_encrypted TEXT NOT NULL,
+    public_key TEXT NOT NULL,
+    -- Quantum-safe keys
+    pqc_private_key_encrypted TEXT,
+    pqc_public_key TEXT,
+    -- Algorithm information
+    algorithm VARCHAR(50) NOT NULL DEFAULT 'ed25519',
+    is_quantum_safe BOOLEAN NOT NULL DEFAULT FALSE,
+    hybrid_mode BOOLEAN NOT NULL DEFAULT FALSE,
+    key_version INTEGER DEFAULT 1,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    rotated_at TIMESTAMP WITH TIME ZONE,
+    status VARCHAR(20) DEFAULT 'active'
 );
 
 -- Multi-Factor Authentication Tables
@@ -137,6 +163,10 @@ CREATE TABLE IF NOT EXISTS atp_audit.events (
     hash VARCHAR(64) NOT NULL,
     previous_hash VARCHAR(64),
     signature TEXT,
+    -- Quantum-safe signature fields
+    pqc_signature TEXT,
+    signature_algorithm VARCHAR(50) DEFAULT 'ed25519',
+    is_quantum_safe BOOLEAN DEFAULT FALSE,
     ipfs_hash VARCHAR(255),
     block_number INTEGER,
     nonce VARCHAR(255),
@@ -182,6 +212,15 @@ CREATE INDEX IF NOT EXISTS idx_agents_did ON atp_identity.agents(did);
 CREATE INDEX IF NOT EXISTS idx_agents_trust_level ON atp_identity.agents(trust_level);
 CREATE INDEX IF NOT EXISTS idx_agents_status ON atp_identity.agents(status);
 CREATE INDEX IF NOT EXISTS idx_agents_created_at ON atp_identity.agents(created_at);
+-- Quantum-safe indexes
+CREATE INDEX IF NOT EXISTS idx_agents_algorithm ON atp_identity.agents(algorithm);
+CREATE INDEX IF NOT EXISTS idx_agents_quantum_safe ON atp_identity.agents(is_quantum_safe);
+CREATE INDEX IF NOT EXISTS idx_agents_hybrid_mode ON atp_identity.agents(hybrid_mode);
+
+CREATE INDEX IF NOT EXISTS idx_key_pairs_did ON atp_identity.key_pairs(did);
+CREATE INDEX IF NOT EXISTS idx_key_pairs_algorithm ON atp_identity.key_pairs(algorithm);
+CREATE INDEX IF NOT EXISTS idx_key_pairs_quantum_safe ON atp_identity.key_pairs(is_quantum_safe);
+CREATE INDEX IF NOT EXISTS idx_key_pairs_status ON atp_identity.key_pairs(status);
 
 CREATE INDEX IF NOT EXISTS idx_mfa_configs_did ON atp_identity.mfa_configs(did);
 CREATE INDEX IF NOT EXISTS idx_mfa_configs_method ON atp_identity.mfa_configs(method);
@@ -206,6 +245,9 @@ CREATE INDEX IF NOT EXISTS idx_events_action ON atp_audit.events(action);
 CREATE INDEX IF NOT EXISTS idx_events_actor ON atp_audit.events(actor);
 CREATE INDEX IF NOT EXISTS idx_events_timestamp ON atp_audit.events(timestamp);
 CREATE INDEX IF NOT EXISTS idx_events_block_number ON atp_audit.events(block_number);
+-- Quantum-safe audit indexes
+CREATE INDEX IF NOT EXISTS idx_events_signature_algorithm ON atp_audit.events(signature_algorithm);
+CREATE INDEX IF NOT EXISTS idx_events_quantum_safe ON atp_audit.events(is_quantum_safe);
 
 CREATE INDEX IF NOT EXISTS idx_metrics_service ON atp_metrics.service_metrics(service_name);
 CREATE INDEX IF NOT EXISTS idx_metrics_name ON atp_metrics.service_metrics(metric_name);
@@ -216,8 +258,8 @@ CREATE INDEX IF NOT EXISTS idx_api_requests_endpoint ON atp_metrics.api_requests
 CREATE INDEX IF NOT EXISTS idx_api_requests_timestamp ON atp_metrics.api_requests(timestamp);
 
 -- Insert initial data
-INSERT INTO atp_identity.agents (did, public_key, trust_level, metadata) VALUES
-('did:atp:staging:system', 'staging-system-public-key', 'ENTERPRISE', '{"name":"ATP Staging System","type":"system","environment":"staging"}')
+INSERT INTO atp_identity.agents (did, public_key, algorithm, is_quantum_safe, hybrid_mode, supported_algorithms, trust_level, metadata) VALUES
+('did:atp:staging:system', 'staging-system-public-key', 'hybrid', true, true, ARRAY['ed25519', 'crystals-dilithium'], 'ENTERPRISE', '{"name":"ATP Staging System","type":"system","environment":"staging","quantumSafe":true}')
 ON CONFLICT (did) DO NOTHING;
 
 INSERT INTO atp_permissions.policies (policy_id, name, description, policy_document, trust_level_required, created_by) VALUES
@@ -260,6 +302,9 @@ CREATE OR REPLACE FUNCTION atp_audit.add_event(
     p_hash VARCHAR(64),
     p_previous_hash VARCHAR(64),
     p_signature TEXT DEFAULT NULL,
+    p_pqc_signature TEXT DEFAULT NULL,
+    p_signature_algorithm VARCHAR(50) DEFAULT 'ed25519',
+    p_is_quantum_safe BOOLEAN DEFAULT FALSE,
     p_ipfs_hash VARCHAR(255) DEFAULT NULL,
     p_block_number INTEGER DEFAULT NULL,
     p_nonce VARCHAR(255) DEFAULT NULL,
@@ -274,10 +319,12 @@ BEGIN
     
     INSERT INTO atp_audit.events (
         id, event_id, source, action, resource, actor, details,
-        hash, previous_hash, signature, ipfs_hash, block_number, nonce, encrypted
+        hash, previous_hash, signature, pqc_signature, signature_algorithm, is_quantum_safe,
+        ipfs_hash, block_number, nonce, encrypted
     ) VALUES (
         new_id, event_id_str, p_source, p_action, p_resource, p_actor, p_details,
-        p_hash, p_previous_hash, p_signature, p_ipfs_hash, p_block_number, p_nonce, p_encrypted
+        p_hash, p_previous_hash, p_signature, p_pqc_signature, p_signature_algorithm, p_is_quantum_safe,
+        p_ipfs_hash, p_block_number, p_nonce, p_encrypted
     );
     
     -- Update chain state

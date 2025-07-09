@@ -189,10 +189,16 @@ export type KeyPair = z.infer<typeof KeyPairSchema>;
 export interface DIDRegistrationRequest {
     publicKey?: string;
     services?: Service[];
+    quantumSafe?: boolean;
+    algorithm?: 'ed25519' | 'dilithium' | 'hybrid';
 }
 export interface DIDRegistrationResponse {
     did: string;
     document: DIDDocument;
     privateKey?: string;
+    pqcPrivateKey?: string;
+    algorithm?: string;
+    isQuantumSafe?: boolean;
+    hybridMode?: boolean;
 }
 //# sourceMappingURL=did.d.ts.map

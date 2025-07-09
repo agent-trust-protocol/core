@@ -2,6 +2,8 @@
  * Jest test setup for ATP™ SDK
  */
 
+import { jest } from '@jest/globals';
+
 // Mock WebSocket for Node.js environment
 (global as any).WebSocket = jest.fn(() => ({
   readyState: 1,

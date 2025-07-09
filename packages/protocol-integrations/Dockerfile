@@ -3,16 +3,28 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Install dependencies for native modules
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ curl
 
-# Copy package files
-COPY package*.json ./
-RUN npm ci --only=production
+# Copy root package files and workspace configuration
+COPY ../../package*.json ./
+COPY ../../lerna.json ./
+COPY ../../tsconfig.json ./
 
-# Copy source code
-COPY . .
+# Copy shared package
+COPY ../shared ./packages/shared/
 
-# Build the application
+# Copy protocol-integrations package
+COPY . ./packages/protocol-integrations/
+
+# Install all dependencies from root
+RUN npm install
+
+# Build shared package first
+WORKDIR /app/packages/shared
+RUN npm run build
+
+# Build protocol-integrations
+WORKDIR /app/packages/protocol-integrations
 RUN npm run build
 
 # Create non-root user

@@ -5,6 +5,7 @@ import { RPCService } from './services/rpc.js';
 import { AuthService } from './services/auth.js';
 import { MTLSService } from './services/mtls.js';
 import { DIDJWTService } from './services/did-jwt.js';
+import { ATPMetricsService } from '@atp/shared';
 const app = express();
 const port = process.env.PORT || 3000;
 const httpsPort = process.env.HTTPS_PORT || 3443;
@@ -23,6 +24,7 @@ if (process.env.TLS_CONFIG_PATH) {
     }
 }
 // Initialize services
+const metricsService = new ATPMetricsService('rpc-gateway');
 const rpcService = new RPCService();
 const authService = new AuthService(mtlsService);
 const didJWTService = new DIDJWTService();
@@ -41,17 +43,41 @@ app.use('/secure/*', async (req, res, next) => {
     next();
 });
 // HTTP API endpoints
-app.get('/health', (req, res) => {
-    const serviceStatus = rpcService.getServiceStatus();
-    res.json({
-        status: 'healthy',
-        service: 'rpc-gateway',
-        version: '0.1.0',
-        protocol: 'Agent Trust Protocol™',
-        services: serviceStatus,
-        mtlsEnabled: !!mtlsService,
-        timestamp: Date.now(),
-    });
+app.get('/health', async (req, res) => {
+    const startTime = Date.now();
+    try {
+        const serviceStatus = rpcService.getServiceStatus();
+        const healthStatus = metricsService.getHealthStatus();
+        const response = {
+            status: 'healthy',
+            service: 'rpc-gateway',
+            version: '0.1.0',
+            protocol: 'Agent Trust Protocol™',
+            services: serviceStatus,
+            mtlsEnabled: !!mtlsService,
+            timestamp: Date.now(),
+            system: healthStatus.system
+        };
+        metricsService.recordResponseTime('/health', Date.now() - startTime);
+        res.json(response);
+    }
+    catch (error) {
+        metricsService.recordError('health_check', error instanceof Error ? error : new Error(String(error)));
+        res.status(500).json({
+            status: 'unhealthy',
+            error: error instanceof Error ? error.message : String(error)
+        });
+    }
+});
+// Metrics endpoint for Prometheus
+app.get('/metrics', (req, res) => {
+    res.set('Content-Type', 'text/plain');
+    res.send(metricsService.getPrometheusMetrics());
+});
+// Detailed health endpoint
+app.get('/health/detailed', async (req, res) => {
+    const healthStatus = metricsService.getHealthStatus();
+    res.json(healthStatus);
 });
 app.get('/services', (req, res) => {
     const serviceStatus = rpcService.getServiceStatus();
@@ -259,6 +285,10 @@ app.post('/broadcast', (req, res) => {
 setInterval(() => {
     rpcService.healthCheck();
 }, 30000); // Every 30 seconds
+// Start system metrics collection
+metricsService.startSystemMetricsCollection(30000);
+// Record startup metric
+metricsService.recordMetric('service_starts_total', 1, 'counter');
 // Start HTTP server
 app.listen(port, () => {
     console.log(`Agent Trust Protocol™ - RPC Gateway v0.1.0`);

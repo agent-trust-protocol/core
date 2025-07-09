@@ -52,7 +52,7 @@ RUN npm run build --workspace=@atp/shared
 RUN npm run build --workspace=@atp/identity-service
 
 # Install production dependencies
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Production stage
 FROM node:18-slim AS production

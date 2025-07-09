@@ -95,7 +95,9 @@ services:
       - atp-network
 
   rpc-gateway:
-    build: ./packages/rpc-gateway
+    build:
+      context: .
+      dockerfile: docker/rpc-gateway.Dockerfile
     ports:
       - "3000:3000"
       - "3443:3443"
@@ -124,7 +126,9 @@ services:
       - atp-network
 
   protocol-integrations:
-    build: ./packages/protocol-integrations
+    build:
+      context: .
+      dockerfile: docker/protocol-integrations.Dockerfile
     ports:
       - "3006:3006"
       - "3007:3007"

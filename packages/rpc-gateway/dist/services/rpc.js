@@ -22,7 +22,7 @@ export class RPCService {
         });
         this.registerService({
             name: 'audit',
-            endpoint: 'http://localhost:3005',
+            endpoint: 'http://localhost:3004',
             methods: ['audit.log', 'audit.query', 'audit.verify'],
             description: 'Audit Logger service',
         });

@@ -10,7 +10,7 @@ COPY packages/shared/package.json ./packages/shared/
 COPY packages/rpc-gateway/package.json ./packages/rpc-gateway/
 
 # Install all dependencies (including dev for building)
-RUN npm ci
+RUN npm install
 
 # Copy source code
 COPY packages/shared ./packages/shared

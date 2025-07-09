@@ -13,6 +13,16 @@ export class DatabaseManager implements DatabaseConnection {
       connectionTimeoutMillis: config.connectionTimeoutMillis || 2000,
     });
 
+    // Set search path for ATP schemas on each new connection
+    this._pool.on('connect', async (client) => {
+      try {
+        await client.query('SET search_path TO atp_identity, atp_permissions, atp_credentials, atp_audit, atp_metrics, public');
+        console.log('✅ Search path set for new database connection');
+      } catch (error) {
+        console.error('❌ Failed to set search path:', error);
+      }
+    });
+
     // Handle pool errors
     this._pool.on('error', (err) => {
       console.error('Unexpected error on idle client', err);
