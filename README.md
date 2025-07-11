@@ -22,8 +22,8 @@ Created and developed by **Larry Lewis**, Sovr INC. (Sovrlabs)
 ## 🚀 **Quick Start**
 
 ```bash
-# Install the core protocol
-npm install @atp/core
+# Install the SDK
+npm install @atp/sdk
 
 # Run a simple agent
 node examples/simple-agent/index.js
@@ -83,13 +83,7 @@ node simple-production-test.js
 # Expected: 🏆 OVERALL PRODUCTION READINESS: 100.0%
 ```
 
-## Get Started in 3 Lines:
 
-```typescript
-const agent = await Agent.create('MyBot');
-await agent.send(otherAgent, 'Quantum-secured message!');
-console.log(`Trust score: ${await agent.getTrustScore(otherAgent)}`);
-```
 
 ### 🤝 Protocol Compatibility
 
@@ -121,19 +115,7 @@ console.log(`Trust score: ${await agent.getTrustScore(otherAgent)}`);
 - **🔗 Protocol Integration**: Ready for MCP integration and cross-protocol interoperability
 - **🏗️ Production Ready**: Docker deployment with native compilation and comprehensive testing
 
-## 🚀 Ultra-Simple Quick Start
-
-### Get Quantum-Safe Security in 3 Lines:
-
-```bash
-npm install @atp/sdk
-```
-
-```typescript
-const agent = await Agent.create('MyBot');
-await agent.send(otherAgent, 'Quantum-secured message!');
-console.log(`Trust score: ${await agent.getTrustScore(otherAgent)}`);
-```
+## 🚀 **What You Get**
 
 **That's it!** Your agent now has:
 - 🔐 Quantum-safe signatures (Dilithium + Ed25519)
@@ -148,8 +130,8 @@ console.log(`Trust score: ${await agent.getTrustScore(otherAgent)}`);
 
 ```bash
 # Clone and start all services
-git clone https://github.com/agent-trust-protocol/atp.git
-cd atp && docker compose up -d
+git clone https://github.com/bigblackcoder/agent-trust-protocol.git
+cd agent-trust-protocol && docker compose up -d
 
 # Verify services (should all return 200 OK)
 curl http://localhost:3001/health  # Identity Service
@@ -375,13 +357,7 @@ ATP™ provides the trust foundation that MCP currently lacks:
 - **Deployment**: Docker with Alpine Linux and native compilation
 - **Testing**: Jest with comprehensive integration test suite
 
-## 📚 Documentation
 
-- **[Getting Started Guide](docs/getting-started.md)** - Complete setup instructions
-- **[API Reference](docs/api/README.md)** - Detailed API documentation  
-- **[Advanced Examples](examples/advanced-agents/README.md)** - Multi-agent scenarios
-- **[Docker Guide](docs/DOCKER_SQLITE_SOLUTIONS.md)** - Production deployment
-- **[Architecture Overview](examples/advanced-agents/README.md#architecture-overview)** - System design
 
 ## 🧪 Examples & Demos
 
@@ -517,11 +493,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ## 📚 Documentation
 
-- [Quick Start Guide](docs/getting-started.md)
-- [Architecture Overview](docs/architecture.md)
-- [API Reference](docs/api/README.md)
-- [Security Model](docs/security.md)
-- [Integration Guides](docs/integrations/README.md)
+- **[Getting Started Guide](docs/getting-started.md)** - Complete setup instructions
+- **[Architecture Overview](docs/architecture.md)** - System design
+- **[API Reference](docs/api/README.md)** - Detailed API documentation  
+- **[Security Model](docs/security.md)** - Security implementation details
+- **[Docker Guide](docs/DOCKER_SQLITE_SOLUTIONS.md)** - Production deployment
+- **[Advanced Examples](examples/advanced-agents/README.md)** - Multi-agent scenarios
 
 ## 🏢 Use Cases
 
@@ -661,17 +638,17 @@ Special thanks to the open source community for the foundational technologies th
 ## 🚀 Get Started Today
 
 ```bash
-git clone https://github.com/agent-trust-protocol/atp.git
-cd atp
+git clone https://github.com/bigblackcoder/agent-trust-protocol.git
+cd agent-trust-protocol
 npm install
 npm run test
 ```
 
 <p align="center">
   <b>Securing the Agentic Web, One Trust Relationship at a Time</b><br>
-  <a href="https://github.com/agent-trust-protocol/atp">⭐ Star us on GitHub</a> •
+  <a href="https://github.com/bigblackcoder/agent-trust-protocol">⭐ Star us on GitHub</a> •
   <a href="https://agenttrust.dev">📖 Read the Docs</a> •
-  <a href=https://discord.com/channels/1388272814645186740/1388272815446163478">💬 Join Discord</a>
+  <a href="https://discord.com/channels/1388272814645186740/1388272815446163478">💬 Join Discord</a>
 </p>
 
 <p align="center">
