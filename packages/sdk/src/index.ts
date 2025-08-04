@@ -8,6 +8,10 @@
  * @license MIT
  */
 
+// Simplified Agent API (3-line quick start!)
+export { Agent, type SimpleAgentOptions } from './simple-agent.js';
+export { Agent as default } from './simple-agent.js';
+
 // Main ATP Client
 export { ATPClient } from './client/atp.js';
 

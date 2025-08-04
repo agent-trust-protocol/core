@@ -1,46 +1,41 @@
-# ATP™ SDK
+# @atp/sdk - Agent Trust Protocol SDK
 
-> Official TypeScript SDK for the Agent Trust Protocol™
+> Official TypeScript SDK for Agent Trust Protocol™ - Build quantum-safe AI agents in 3 lines of code!
 
 [![npm version](https://badge.fury.io/js/@atp%2Fsdk.svg)](https://badge.fury.io/js/@atp%2Fsdk)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
-The ATP™ SDK provides a comprehensive TypeScript/JavaScript interface for interacting with Agent Trust Protocol™ services, enabling developers to build secure, verifiable, and trustworthy applications with decentralized identity, verifiable credentials, and robust access control.
-
-## 🚀 Quick Start
+## 🚀 Quick Start (3 Lines!)
 
 ```bash
 npm install @atp/sdk
 ```
 
-```javascript
-import { ATPClient, createQuickConfig } from '@atp/sdk';
+```typescript
+import { Agent } from '@atp/sdk';
 
-// Initialize client
-const config = createQuickConfig('http://localhost');
-const client = new ATPClient(config);
-
-// Test connectivity
-const status = await client.testConnectivity();
-console.log('ATP services available:', status.overall);
-
-// Generate and register a new identity
-import { DIDUtils } from '@atp/sdk';
-const { did, document, keyPair } = await DIDUtils.generateDID({ network: 'testnet' });
-
-client.setAuthentication({
-  did: did,
-  privateKey: keyPair.privateKey
-});
-
-const identity = await client.identity.register({
-  did: did,
-  document: document
-});
-
-console.log('Identity registered:', identity.data.did);
+const agent = await Agent.create('MyBot');                            // Line 1: Create quantum-safe agent
+await agent.send('did:atp:other-agent', 'Hello, quantum world!');    // Line 2: Send secure message
+console.log(`Trust: ${await agent.getTrustScore('did:atp:other')}`); // Line 3: Check trust score
 ```
+
+That's it! You now have a quantum-safe AI agent with decentralized identity, secure messaging, and trust scoring.
+
+## 🛠️ Prerequisites
+
+Currently, ATP services need to be running locally. Hosted services coming soon!
+
+```bash
+# Clone and start ATP services
+git clone https://github.com/bigblackcoder/agent-trust-protocol.git
+cd agent-trust-protocol
+./start-services.sh
+```
+
+## 📖 Full SDK Documentation
+
+For advanced usage, see the complete API documentation below...
 
 ## 📖 Documentation
 
