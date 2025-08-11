@@ -150,11 +150,11 @@ export function createQuickConfig(baseUrl: string, options?: {
     retryDelay: ATP_CONSTANTS.RETRY_DELAY,
     auth: options?.auth || {},
     services: {
-      identity: `${baseUrl}:3001`,
-      credentials: `${baseUrl}:3002`, 
-      permissions: `${baseUrl}:3003`,
-      audit: `${baseUrl}:3004`,
-      gateway: `${baseUrl}:3000`
+      identity: process.env.ATP_IDENTITY_URL || `${baseUrl}:3001`,
+      credentials: process.env.ATP_CREDENTIALS_URL || `${baseUrl}:3002`, 
+      permissions: process.env.ATP_PERMISSIONS_URL || `${baseUrl}:3003`,
+      audit: process.env.ATP_AUDIT_URL || `${baseUrl}:3006`,
+      gateway: process.env.ATP_GATEWAY_URL || `${baseUrl}:3000`
     }
   };
 }

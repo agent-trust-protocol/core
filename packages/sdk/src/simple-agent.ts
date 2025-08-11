@@ -28,17 +28,23 @@ export class Agent {
   private constructor(name: string, options?: SimpleAgentOptions) {
     this.name = name;
     
-    // Default to local services for now, will switch to hosted when available
-    const baseUrl = options?.serverUrl || 'http://localhost';
-    
+    // Default to local services (overridable via options or env). Audit defaults to 3006 to match mocks.
+    const baseUrl = options?.serverUrl || process.env.ATP_SERVER_URL || 'http://localhost';
+
+    const identityUrl = process.env.ATP_IDENTITY_URL || `${baseUrl}:3001`;
+    const credentialsUrl = process.env.ATP_CREDENTIALS_URL || `${baseUrl}:3002`;
+    const permissionsUrl = process.env.ATP_PERMISSIONS_URL || `${baseUrl}:3003`;
+    const auditUrl = process.env.ATP_AUDIT_URL || `${baseUrl}:3006`;
+    const gatewayUrl = process.env.ATP_GATEWAY_URL || `${baseUrl}:3000`;
+
     const config: ATPConfig = {
       baseUrl,
       services: {
-        identity: `${baseUrl}:3001`,
-        credentials: `${baseUrl}:3002`,
-        permissions: `${baseUrl}:3003`,
-        audit: `${baseUrl}:3004`,
-        gateway: `${baseUrl}:3000`
+        identity: identityUrl,
+        credentials: credentialsUrl,
+        permissions: permissionsUrl,
+        audit: auditUrl,
+        gateway: gatewayUrl,
       }
     };
 

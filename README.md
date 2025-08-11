@@ -28,15 +28,14 @@ Created and developed by **Larry Lewis**, Sovr INC. (Sovrlabs)
 ### Option A — Use running mocks (no Docker required)
 
 ```bash
-# Terminal A: start mocks (already included in repo)
-node mock-identity-service.js &   # http://localhost:3001
-node mock-permission-service.js & # http://localhost:3003
-node mock-audit-service.js &      # http://localhost:3006
+# Terminal A: start mocks
+bash scripts/start-all-mocks.sh
 
 # Terminal B: run UI (or your app) with envs
 export NEXT_PUBLIC_ATP_IDENTITY_URL=http://localhost:3001
 export NEXT_PUBLIC_ATP_PERMISSION_URL=http://localhost:3003
 export NEXT_PUBLIC_ATP_AUDIT_URL=http://localhost:3006
+export NEXT_PUBLIC_ATP_GATEWAY_URL=http://localhost:3000
 npm --prefix website-repo run dev
 
 # Optional: run Node quickstart
