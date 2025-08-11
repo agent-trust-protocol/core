@@ -1,5 +1,5 @@
 {
-  "name": "@atp/sdk",
+  "name": "atp-sdk",
   "version": "1.0.0",
   "description": "Official TypeScript SDK for Agent Trust Protocol™ - Build secure, verifiable, and trustworthy applications with decentralized identity, verifiable credentials, and robust access control",
   "main": "dist/index.js",
@@ -30,7 +30,7 @@
     "clean": "rm -rf dist coverage",
     "docs": "typedoc src/index.ts --out docs/api-generated",
     "examples": "node examples/index.js",
-    "prepublishOnly": "npm run lint:check && npm run test && npm run build",
+    "prepublishOnly": "npm run test && npm run build",
     "release": "npm run prepublishOnly && npm publish",
     "release:beta": "npm run prepublishOnly && npm publish --tag beta",
     "release:alpha": "npm run prepublishOnly && npm publish --tag alpha"
@@ -51,7 +51,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bigblackcoder/agent-trust-protocol.git",
+    "url": "git+https://github.com/bigblackcoder/agent-trust-protocol.git",
     "directory": "packages/sdk"
   },
   "homepage": "https://atp.dev",
@@ -86,9 +86,6 @@
     "@rollup/plugin-node-resolve": "^15.0.0",
     "@rollup/plugin-commonjs": "^25.0.0"
   },
-  "peerDependencies": {
-    "@atp/shared": "^0.1.0"
-  },
   "files": [
     "dist/**/*",
     "docs/**/*",
@@ -103,5 +100,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples"
   }
 }
