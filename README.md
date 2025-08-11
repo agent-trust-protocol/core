@@ -21,7 +21,7 @@
 ## ✨ **3-Line SDK Now Available!**
 
 ```typescript
-import { Agent } from '@atp/sdk';
+import { Agent } from 'atp-sdk';
 
 const agent = await Agent.create('MyBot');                            // Line 1: Create quantum-safe agent
 await agent.send('did:atp:other-agent', 'Hello, quantum world!');    // Line 2: Send secure message
@@ -33,13 +33,10 @@ console.log(`Trust: ${await agent.getTrustScore('did:atp:other')}`); // Line 3: 
 ### 📦 **Installation**
 
 ```bash
-# Clone the repository to use the 3-line SDK
-git clone https://github.com/bigblackcoder/agent-trust-protocol.git
-cd agent-trust-protocol
-npm install
+npm install atp-sdk
 ```
 
-*Note: SDK requires ATP services running locally. NPM package coming soon. Use the quick start options below to get started.*
+*Note: SDK requires ATP services running locally. Use the quick start options below to get started.*
 
 ---
 
@@ -148,7 +145,7 @@ npm run build
 npm start
 ```
 
-> **Note**: The 3-line SDK works locally now. We're working on hosted ATP services and NPM package publication.
+> **Note**: The 3-line SDK is ready! NPM package published. We're working on hosted ATP services.
 
 ---
 
@@ -205,7 +202,7 @@ ATP serves as the **Security Foundation** for the emerging Agentic Web:
 
 | Component | Status | Timeline |
 |-----------|--------|----------|
-| 📦 **NPM Package** | 🔄 In Progress | 1-2 weeks |
+| 📦 **NPM Package** | ✅ LIVE | Available now! |
 | 🚀 **3-Line Quick Start** | ✅ READY | Works locally now |
 | ☁️ **Hosted ATP Services** | 📋 Planned | 3-4 weeks |
 | 📚 **Developer Tutorials** | 📋 Planned | 3-4 weeks |
@@ -214,7 +211,7 @@ ATP serves as the **Security Foundation** for the emerging Agentic Web:
 ### 🎯 **For Different Users**
 
 - **Enterprise Users**: ✅ Ready to deploy! Full production system available
-- **Developers**: ✅ 3-Line SDK ready! (NPM package coming soon)
+- **Developers**: ✅ 3-Line SDK ready! NPM package live at `npm install atp-sdk`
 - **Researchers**: ✅ Explore our quantum-safe implementation today
 
 
@@ -290,7 +287,7 @@ cd examples/advanced-agents && npm run demo
 ### Create Your First Secure Agent
 
 ```typescript
-import { Agent } from '@atp/sdk';
+import { Agent } from 'atp-sdk';
 
 // Initialize agent with DID
 const agent = new Agent({
@@ -719,7 +716,7 @@ As AI agents become more autonomous and interconnected, establishing trust betwe
 ### Tracking Our Journey
 - **Launch Date**: [LAUNCHING THIS WEEK]
 - **GitHub Stars**: ![GitHub stars](https://img.shields.io/github/stars/bigblackcoder/agent-trust-protocol)
-- **npm Downloads**: ![npm downloads](https://img.shields.io/npm/dw/@atp/sdk)
+- **npm Downloads**: ![npm downloads](https://img.shields.io/npm/dw/atp-sdk)
 - **First in Industry**: ✅ Quantum-Safe Agent Protocol
 - **Security Innovation**: ✅ Trust Scoring for AI Agents
 - **Time to Integration**: <5 minutes
