@@ -1,9 +1,15 @@
 node_modules
 
 # Environment files with secrets
+.env
+.env.*
+!.env.example
 .env.production
 .env.staging
 .env.local
+.env.prod
+.env.bak
+*.env
 
 # SSL certificates and secrets
 ssl/*.pem
@@ -40,3 +46,39 @@ coverage/
 # Temporary files
 tmp/
 temp/
+# Security-critical files
+godaddy-config.sh
+deploy-*.sh
+*@*.*.*.* 
+# API Keys and credentials
+*api[_-]key*
+*secret*
+!.gitignore.security
+!*secret*.example*
+
+# Development Tools and Agent OS
+.agent-os/
+.bmad-*/
+bmad-*/
+.cursor/
+.clinerules/
+.roo/
+.roomodes
+.mcp.json
+
+# Claude/AI Development Tools
+claude-*config*.json
+.claude/
+**/BMad/
+
+# Development scripts and deployment files that contain sensitive info
+*deploy*.sh
+*fix*.sh
+*config*.sh
+*setup*.sh
+ecosystem.config.js
+root@*
+
+# Backup and temporary deployment files
+*.tar.gz
+*.bak
