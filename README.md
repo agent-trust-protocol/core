@@ -758,6 +758,16 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 Copyright 2024 Larry Lewis, Sovr INC DBA SovrLabs
 
+---
+
+## 👨‍💻 Created By
+
+**Created by:** Jack Lu  
+**Company:** [Personal Portfolio](https://jackludev.vercel.app)  
+**Contact:** [GitHub](https://github.com/jacklu-co) | [LinkedIn](https://linkedin.com/in/jack-lu-dev)
+
+*Original concept and architecture by Larry Lewis, Sovr Labs. Enhanced and extended with enterprise features, compliance frameworks, clustering, and protocol integrations by Jack Lu.*
+
 ## 📊 Comparison with Other Protocols
 
 | Feature | ATP | OAuth 2.0 | DIDComm | Traditional Auth |

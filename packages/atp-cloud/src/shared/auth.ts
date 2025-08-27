@@ -91,7 +91,7 @@ export class AuthService {
    */
   public generateToken(payload: any, expiresIn: string = '1h'): string {
     const cloudConfig = config.getConfig();
-    return jwt.sign(payload, cloudConfig.auth.jwtSecret, { expiresIn });
+    return jwt.sign(payload, cloudConfig.auth.jwtSecret, { expiresIn } as jwt.SignOptions);
   }
 
   /**

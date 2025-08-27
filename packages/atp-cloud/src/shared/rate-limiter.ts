@@ -117,7 +117,7 @@ export class RateLimiterService {
     try {
       const resRateLimiter = await rateLimiter.get(tenantId);
       return {
-        totalHits: resRateLimiter?.totalHits || 0,
+        totalHits: resRateLimiter ? (rateLimiter.points - resRateLimiter.remainingPoints) : 0,
         remainingPoints: resRateLimiter?.remainingPoints || rateLimiter.points,
         msBeforeNext: resRateLimiter?.msBeforeNext || 0,
         limit: rateLimiter.points,

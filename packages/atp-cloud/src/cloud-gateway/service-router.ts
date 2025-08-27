@@ -163,13 +163,18 @@ export class ServiceRouter {
     const startTime = Date.now();
     
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      
       const response = await fetch(`${endpoint.url.replace(/:\d+$/, '')}:${endpoint.port}/health`, {
         method: 'GET',
-        timeout: 5000,
+        signal: controller.signal,
         headers: {
           'User-Agent': 'ATP-Cloud-HealthCheck/1.0'
         }
       });
+      
+      clearTimeout(timeoutId);
 
       const endTime = Date.now();
       const responseTime = endTime - startTime;

@@ -39,6 +39,28 @@ export interface IntegrityProof {
   proofPath: string[];
 }
 
+export interface TrustRecord {
+  agentDID: string;
+  trustScore: number;
+  reputation: number;
+  interactions: number;
+  lastUpdate: number;
+  blockHash: string;
+  transactionHash: string;
+  validators: string[];
+}
+
+export interface TrustTransaction {
+  id: string;
+  fromAgent: string;
+  toAgent: string;
+  interactionType: 'cooperation' | 'violation' | 'verification' | 'delegation';
+  trustDelta: number;
+  evidence: string;
+  timestamp: number;
+  signature: string;
+}
+
 /**
  * Blockchain-based audit trail verification service
  * Provides immutable anchoring of audit events to a blockchain

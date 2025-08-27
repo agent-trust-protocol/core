@@ -7,7 +7,7 @@ export const AuditEventSchema = z.object({
   action: z.string(),
   resource: z.string(),
   actor: z.string().optional(),
-  details: z.record(z.any()).optional(),
+  details: z.record(z.string(), z.any()).optional(),
   hash: z.string(),
   previousHash: z.string().optional(),
   ipfsHash: z.string().optional(),

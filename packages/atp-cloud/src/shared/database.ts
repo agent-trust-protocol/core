@@ -57,7 +57,6 @@ export class DatabaseManager {
       const cloudConfig = config.getConfig();
       this.redis = new Redis(cloudConfig.database.redis.url, {
         keyPrefix: cloudConfig.database.redis.keyPrefix,
-        retryDelayOnFailover: 100,
         maxRetriesPerRequest: 3,
         lazyConnect: true
       });

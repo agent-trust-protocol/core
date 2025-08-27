@@ -298,6 +298,13 @@ export class TrustScoringEngine {
     
     return trustScore.score >= requiredLevel;
   }
+
+  /**
+   * Evaluate agent trust score (alias for calculateTrustScore)
+   */
+  async evaluateAgent(agentDid: string): Promise<TrustScore> {
+    return this.calculateTrustScore(agentDid);
+  }
 }
 
 // Export convenience functions

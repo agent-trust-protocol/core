@@ -199,3 +199,52 @@ export class RateLimitError extends CloudError {
     this.name = 'RateLimitError';
   }
 }
+
+// Analytics Types
+export interface UsageHistory {
+  timestamp: Date;
+  requests: number;
+  bandwidth: number;
+  responseTime: number;
+  errorRate: number;
+}
+
+export interface ErrorMetrics {
+  timestamp: Date;
+  errors: number;
+  rate: number;
+}
+
+export interface ServiceUsage {
+  service: string;
+  requests: number;
+}
+
+export interface MetricValue {
+  timestamp: Date;
+  value: number;
+}
+
+export interface PerformanceMetrics {
+  latency: {
+    average: number;
+    p50: number;
+    p95: number;
+    p99: number;
+    trend: Array<{ timestamp: Date; value: number }>;
+  };
+  throughput: {
+    requestsPerSecond: number;
+    trend: Array<{ timestamp: Date; value: number }>;
+  };
+  availability: {
+    percentage: number;
+    downtime: number; // in minutes
+    incidents: Array<{
+      start: Date;
+      end: Date;
+      service: string;
+      reason: string;
+    }>;
+  };
+}

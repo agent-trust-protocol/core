@@ -9,3 +9,4 @@ export * from './api-security.js';
 export * from '../encryption.js';
 export * from './encryption.js';
 export * from './nonce-service.js';
+export * from './quantum-safe.js';

@@ -1,5 +1,6 @@
 import { BaseStorage } from '@atp/shared';
 import { CryptoUtils } from '../utils/crypto.js';
+import { encryptionService } from '@atp/shared/dist/security/encryption.js';
 export class StorageService extends BaseStorage {
     constructor(config) {
         super(config);
@@ -54,9 +55,13 @@ export class StorageService extends BaseStorage {
       SET metadata = COALESCE(metadata, '{}'::jsonb) || $2::jsonb
       WHERE did = $1
     `;
+        // Encrypt private key before storage
+        const encryptedPrivateKey = encryptionService.encrypt(keyPair.privateKey);
         const privateKeyMetadata = {
-            privateKey: keyPair.privateKey,
-            keyRotated: keyPair.rotated || null
+            privateKey: encryptedPrivateKey,
+            keyRotated: keyPair.rotated || null,
+            encrypted: true,
+            encryptionVersion: 'v1'
         };
         await this.db.query(metadataQuery, [
             keyPair.did,
@@ -74,10 +79,32 @@ export class StorageService extends BaseStorage {
         }
         const row = result.rows[0];
         const metadata = this.safeJsonParse(row.metadata) || {};
+        // Decrypt private key if it was encrypted
+        let privateKey = '';
+        if (metadata.encrypted && metadata.privateKey) {
+            try {
+                privateKey = encryptionService.decrypt(metadata.privateKey);
+            }
+            catch (error) {
+                console.error('Failed to decrypt private key:', error);
+                throw new Error('Unable to decrypt private key');
+            }
+        }
+        else {
+            // Legacy unencrypted keys detected - migrate automatically
+            if (metadata.privateKey) {
+                console.warn(`Migrating legacy unencrypted private key for DID: ${row.did}`);
+                await this.migrateLegacyPrivateKey(row.did, metadata.privateKey);
+                privateKey = metadata.privateKey;
+            }
+            else {
+                throw new Error('Private key not found and not encrypted');
+            }
+        }
         return {
             did: row.did,
             publicKey: row.public_key,
-            privateKey: metadata.privateKey || '',
+            privateKey,
             created: row.created_at,
             rotated: metadata.keyRotated,
         };
@@ -112,5 +139,36 @@ export class StorageService extends BaseStorage {
         const query = 'SELECT did FROM atp_identity.did_documents ORDER BY created_at DESC';
         const result = await this.db.query(query);
         return result.rows.map((row) => row.did);
+    }
+    /**
+     * Migrates legacy unencrypted private key to encrypted storage
+     * @private
+     */
+    async migrateLegacyPrivateKey(did, plaintextPrivateKey) {
+        try {
+            // Encrypt the plaintext private key
+            const encryptedPrivateKey = encryptionService.encrypt(plaintextPrivateKey);
+            // Update metadata with encrypted key
+            const encryptedMetadata = {
+                privateKey: encryptedPrivateKey,
+                encrypted: true,
+                encryptionVersion: 'v1',
+                migratedAt: new Date().toISOString()
+            };
+            const updateQuery = `
+        UPDATE atp_identity.agents 
+        SET metadata = COALESCE(metadata, '{}'::jsonb) || $2::jsonb
+        WHERE did = $1
+      `;
+            await this.db.query(updateQuery, [
+                did,
+                this.safeJsonStringify(encryptedMetadata)
+            ]);
+            console.log(`Successfully migrated private key encryption for DID: ${did}`);
+        }
+        catch (error) {
+            console.error(`Failed to migrate private key for DID ${did}:`, error);
+            throw new Error(`Private key migration failed for ${did}`);
+        }
     }
 }

@@ -46,7 +46,7 @@ export class BillingService {
     const cloudConfig = config.getConfig();
     if (cloudConfig.billing.stripeSecretKey) {
       this.stripe = new Stripe(cloudConfig.billing.stripeSecretKey, {
-        apiVersion: '2024-06-20'
+        apiVersion: '2023-10-16'
       });
     } else {
       logger.warn('Stripe not configured - billing features disabled');
@@ -461,10 +461,10 @@ export class BillingService {
     maxBandwidth: number;
   } {
     const limits = {
-      free: { maxAgents: 5, maxRequests: 1000, maxStorage: 100, maxBandwidth: 1000 },
-      starter: { maxAgents: 25, maxRequests: 10000, maxStorage: 1000, maxBandwidth: 10000 },
-      professional: { maxAgents: 100, maxRequests: 100000, maxStorage: 10000, maxBandwidth: 100000 },
-      enterprise: { maxAgents: 1000, maxRequests: 1000000, maxStorage: 100000, maxBandwidth: 1000000 }
+      free: { maxAgents: 10, maxRequests: 5000, maxStorage: 100, maxBandwidth: 1000 },
+      starter: { maxAgents: 25, maxRequests: 25000, maxStorage: 5000, maxBandwidth: 25000 },
+      professional: { maxAgents: 100, maxRequests: 250000, maxStorage: 50000, maxBandwidth: 250000 },
+      enterprise: { maxAgents: 1000, maxRequests: 2500000, maxStorage: 500000, maxBandwidth: 2500000 }
     };
     
     return limits[plan];
@@ -473,9 +473,9 @@ export class BillingService {
   private getPlanPrice(plan: TenantPlan): number {
     const prices = {
       free: 0,
-      starter: 29,
-      professional: 99,
-      enterprise: 499
+      starter: 250, // $3,000/year
+      professional: 1500, // $18,000/year  
+      enterprise: 4167 // $50,000/year minimum
     };
     
     return prices[plan];

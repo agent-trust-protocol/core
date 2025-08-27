@@ -27,6 +27,7 @@ export class UsageTracker {
   public trackUsage = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const startTime = Date.now();
     const originalSend = res.send;
+    const tracker = this; // Capture the tracker instance
 
     // Override res.send to capture response details
     res.send = function(data: any) {
@@ -56,7 +57,7 @@ export class UsageTracker {
         };
 
         // Queue the event for batch processing
-        this.queueEvent(event);
+        tracker.queueEvent(event);
       }
 
       return originalSend.call(this, data);
@@ -231,7 +232,7 @@ export class UsageTracker {
       { $sort: { count: -1 } },
       { $limit: 10 },
       { $project: { path: '$_id', count: 1, _id: 0 } }
-    ]).toArray();
+    ]).toArray() as Array<{ path: string; count: number }>;
 
     // Get daily usage
     const dailyUsage = await database.collection('usage_events').aggregate([
@@ -245,7 +246,7 @@ export class UsageTracker {
       },
       { $sort: { '_id': 1 } },
       { $project: { date: '$_id', requests: 1, bandwidth: 1, _id: 0 } }
-    ]).toArray();
+    ]).toArray() as Array<{ date: string; requests: number; bandwidth: number }>;
 
     return {
       totalRequests: analytics.totalRequests || 0,

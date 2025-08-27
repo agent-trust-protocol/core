@@ -13,14 +13,15 @@ const logger = winston.createLogger({
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
     winston.format.json(),
-    winston.format.printf(({ timestamp, level, message, service, tenantId, ...meta }) => {
+    winston.format.printf((info: any) => {
+      const { timestamp, level, message, service, tenantId, ...meta } = info;
       const logEntry = {
         timestamp,
         level,
         message,
         service: service || 'atp-cloud',
         ...(tenantId && { tenantId }),
-        ...meta
+        ...(typeof meta === 'object' && meta !== null ? meta : {})
       };
       return JSON.stringify(logEntry);
     })

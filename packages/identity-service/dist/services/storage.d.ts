@@ -12,5 +12,10 @@ export declare class StorageService extends BaseStorage {
         privateKey: string;
     }>;
     listDIDs(): Promise<string[]>;
+    /**
+     * Migrates legacy unencrypted private key to encrypted storage
+     * @private
+     */
+    private migrateLegacyPrivateKey;
 }
 //# sourceMappingURL=storage.d.ts.map

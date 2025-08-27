@@ -39,40 +39,40 @@ export interface CreateApiKeyRequest {
 export class TenantManager {
   private readonly PLAN_LIMITS = {
     free: {
-      maxAgents: 5,
-      maxRequests: 1000,
+      maxAgents: 10,
+      maxRequests: 5000,
       maxStorage: 100, // MB
       maxBandwidth: 1000, // MB
-      apiKeysLimit: 2
+      apiKeysLimit: 3
     },
     starter: {
       maxAgents: 25,
-      maxRequests: 10000,
-      maxStorage: 1000, // MB
-      maxBandwidth: 10000, // MB
+      maxRequests: 25000,
+      maxStorage: 5000, // MB
+      maxBandwidth: 25000, // MB
       apiKeysLimit: 5
     },
     professional: {
       maxAgents: 100,
-      maxRequests: 100000,
-      maxStorage: 10000, // MB
-      maxBandwidth: 100000, // MB
-      apiKeysLimit: 10
+      maxRequests: 250000,
+      maxStorage: 50000, // MB
+      maxBandwidth: 250000, // MB
+      apiKeysLimit: 15
     },
     enterprise: {
       maxAgents: 1000,
-      maxRequests: 1000000,
-      maxStorage: 100000, // MB
-      maxBandwidth: 1000000, // MB
-      apiKeysLimit: 25
+      maxRequests: 2500000,
+      maxStorage: 500000, // MB
+      maxBandwidth: 2500000, // MB
+      apiKeysLimit: 50
     }
   };
 
   private readonly PLAN_PRICES = {
     free: 0,
-    starter: 29,
-    professional: 99,
-    enterprise: 499
+    starter: 250, // $3,000/year
+    professional: 1500, // $18,000/year
+    enterprise: 4167 // $50,000/year minimum
   };
 
   /**
@@ -119,8 +119,8 @@ export class TenantManager {
       name: 'Default API Key',
       key: auth.generateApiKey(tenantId),
       permissions: ['*'],
-      lastUsed: null,
-      expiresAt: null,
+      lastUsed: undefined,
+      expiresAt: undefined,
       rateLimit: {
         requests: limits.maxRequests,
         window: 3600 // 1 hour
@@ -351,7 +351,7 @@ export class TenantManager {
       name: request.name,
       key: auth.generateApiKey(tenantId),
       permissions: request.permissions || ['*'],
-      lastUsed: null,
+      lastUsed: undefined,
       expiresAt: request.expiresIn ? new Date(Date.now() + request.expiresIn * 24 * 60 * 60 * 1000) : null,
       rateLimit: request.rateLimit || {
         requests: limits.maxRequests,
@@ -363,7 +363,7 @@ export class TenantManager {
       await database.collection('tenants').updateOne(
         { id: tenantId },
         {
-          $push: { apiKeys: apiKey },
+          $push: { apiKeys: apiKey } as any,
           $set: { updatedAt: new Date() }
         }
       );
@@ -404,7 +404,7 @@ export class TenantManager {
       const result = await database.collection('tenants').updateOne(
         { id: tenantId },
         {
-          $pull: { apiKeys: { id: keyId } },
+          $pull: { apiKeys: { id: keyId } } as any,
           $set: { updatedAt: new Date() }
         }
       );
@@ -454,7 +454,7 @@ export class TenantManager {
           .sort({ createdAt: -1 })
           .limit(5)
           .project({ id: 1, name: 1, plan: 1, createdAt: 1 })
-          .toArray()
+          .toArray() as Promise<Array<{ id: string; name: string; plan: string; createdAt: Date }>>
       ]);
 
       const planDistributionMap: Record<string, number> = {};

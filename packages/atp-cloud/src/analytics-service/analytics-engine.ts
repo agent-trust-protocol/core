@@ -5,6 +5,7 @@
 
 import { db } from '../shared/database.js';
 import { createServiceLogger } from '../shared/logger.js';
+import { UsageHistory, ErrorMetrics, ServiceUsage, MetricValue, PerformanceMetrics } from '../types/index.js';
 
 const logger = createServiceLogger('analytics-engine');
 
@@ -29,29 +30,6 @@ export interface UsageMetrics {
   };
 }
 
-export interface PerformanceMetrics {
-  latency: {
-    average: number;
-    p50: number;
-    p95: number;
-    p99: number;
-    trend: Array<{ timestamp: Date; value: number }>;
-  };
-  throughput: {
-    requestsPerSecond: number;
-    trend: Array<{ timestamp: Date; value: number }>;
-  };
-  availability: {
-    percentage: number;
-    downtime: number; // in minutes
-    incidents: Array<{
-      start: Date;
-      end: Date;
-      service: string;
-      reason: string;
-    }>;
-  };
-}
 
 export class AnalyticsEngine {
   /**
@@ -213,7 +191,7 @@ export class AnalyticsEngine {
       ];
 
       const results = await database.collection('usage_events').aggregate(pipeline).toArray();
-      return results;
+      return results as UsageHistory[];
     } catch (error) {
       logger.error('Failed to get usage history', { error, tenantId, granularity });
       throw error;
@@ -531,7 +509,7 @@ export class AnalyticsEngine {
             rate: { $round: ['$rate', 2] }
           }
         }
-      ]).toArray();
+      ]).toArray() as ErrorMetrics[];
 
       return {
         totalErrors: stats.totalErrors,
@@ -609,7 +587,7 @@ export class AnalyticsEngine {
               _id: 0
             }
           }
-        ]).toArray()
+        ]).toArray() as unknown as ServiceUsage[]
       ]);
 
       const stats = platformStats[0] || {
@@ -779,7 +757,7 @@ export class AnalyticsEngine {
       }
     ];
 
-    return await database.collection('usage_events').aggregate(pipeline).toArray();
+    return await database.collection('usage_events').aggregate(pipeline).toArray() as MetricValue[];
   }
 
   private async getAvailabilityMetrics(tenantId: string, startDate: Date, endDate: Date): Promise<{
