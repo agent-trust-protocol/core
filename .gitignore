@@ -1,5 +1,82 @@
 node_modules
 
+# CRITICAL: Hide ALL internal development files from public repository
+# This repository follows best open-source practices by keeping internal
+# documentation, testing, and development tools private
+
+# ===== DEVELOPER TOOLS & AGENT SYSTEMS =====
+.agent-os/
+.bmad*/
+bmad-*/
+.cursor/
+.clinerules/
+.roo/
+.roomodes
+.trae/
+.windsurf/
+.github/chatmodes/
+.github/copilot-instructions.md
+.mcp.json
+claude-*.json
+claude-*.js
+CLAUDE.md
+CLAUDE_*.md
+
+# ===== ALL INTERNAL DOCUMENTATION (UPPERCASE) =====
+# Hide all uppercase .md files except README.md, LICENSE.md, CONTRIBUTING.md
+[A-Z]*.md
+!README.md
+!LICENSE.md
+!CONTRIBUTING.md
+!CHANGELOG.md
+!CODE_OF_CONDUCT.md
+!SECURITY.md
+
+# ===== SPECIFIC INTERNAL DOCS TO HIDE =====
+*-DEPLOYMENT-*.md
+*-TEST-*.md
+*-TESTING-*.md
+*-VALIDATION-*.md
+*-TROUBLESHOOTING*.md
+*-ENTERPRISE-*.md
+*-PILOT-*.md
+*-PITCH-*.md
+*-STATUS*.md
+*-SUMMARY*.md
+*-BACKUP*.md
+*-READY*.md
+*-GUIDE*.md
+*-PLAN*.md
+*-REPORT*.md
+*-FIX-*.md
+*DOCKER*.md
+*CRYPTO*.md
+*HYDRATION*.md
+*GITHUB*.md
+*LANDING*.md
+*PRODUCTION*.md
+*QUANTUM-SAFE*.md
+BENCHMARKS.md
+PILOT-PROGRAM-*.md
+MANUAL-*.md
+MULTI-REPOSITORY-*.md
+PUSH-*.md
+README-*.md
+demo/DEMO-*.md
+docs/ENTERPRISE-*.md
+docs/TROUBLESHOOTING-*.md
+docs/DOCKER*.md
+production/*.md
+packages/*/test-*.md
+
+# ===== DOCKER DEVELOPMENT FILES =====
+Dockerfile.quantum-safe*
+Dockerfile.*-demo
+DOCKER-*.md
+docker-*.yml
+docker-*.yaml
+!docker-compose.yml  # Keep main docker-compose
+
 # Environment files with secrets
 .env
 .env.*
