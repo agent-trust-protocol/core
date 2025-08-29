@@ -501,7 +501,7 @@ export class EnterpriseOnboardingService {
     `;
 
     await this.emailTransporter.sendMail({
-      from: process.env.EMAIL_FROM || 'noreply@agenttrustprotocol.com',
+      from: process.env.EMAIL_FROM || 'llewis@agenttrustprotocol.com',
       to: email,
       subject: 'Welcome to ATP Enterprise Trial',
       text: emailContent,

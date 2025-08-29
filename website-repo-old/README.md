@@ -207,5 +207,5 @@ This website code is licensed under the Apache License 2.0.
   <b>ATP™ - Securing the Agentic Web</b><br>
   <a href="https://github.com/bigblackcoder/agent-trust-protocol">⭐ Core Protocol</a> •
   <a href="https://agenttrust.dev">🌐 Website</a> •
-  <a href="mailto:sales@sovrlabs.com">💼 Enterprise Sales</a>
+  <a href="mailto:llewis@agenttrustprotocol.com">💼 Enterprise Sales</a>
 </p>

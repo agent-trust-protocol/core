@@ -54,7 +54,7 @@ ENV ATP_QUANTUM_SAFE=true
 CMD ["node", "quantum-safe-server-improved.js"]
 
 # Metadata
-LABEL maintainer="Larry Lewis <larry@sovrlabs.com>"
+LABEL maintainer="Larry Lewis <llewis@agenttrustprotocol.com>"
 LABEL version="1.0.0"
 LABEL description="Agent Trust Protocol™ - World's First Quantum-Safe AI Agent Protocol"
 LABEL org.opencontainers.image.title="ATP Quantum-Safe MCP Server"

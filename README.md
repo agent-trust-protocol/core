@@ -157,7 +157,7 @@ npm install
 # Set up PostgreSQL database
 createdb atp_dev
 
-# Start ATP services (5 microservices)
+# Start ATP services (7 microservices)
 ./start-services.sh
 
 # In another terminal, run example agents
@@ -173,7 +173,7 @@ npm start
 
 ## 🏗️ **Architecture Overview**
 
-ATP provides a complete security layer for AI agents through five core services:
+ATP provides a complete security layer for AI agents through seven core services:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -214,7 +214,7 @@ ATP serves as the **Security Foundation** for the emerging Agentic Web:
 | Component | Status | Details |
 |-----------|--------|---------|
 | 🏢 **Enterprise UI** | ✅ LIVE | Full glassmorphic UI with quantum-safe demos |
-| 🏗️ **Core Infrastructure** | ✅ READY | All 5 microservices operational |
+| 🏗️ **Core Infrastructure** | ✅ READY | All 7 microservices operational |
 | 🔐 **Quantum-Safe Crypto** | ✅ READY | Ed25519 + Dilithium hybrid signatures |
 | 🛡️ **Security Features** | ✅ READY | DIDs, VCs, trust scoring, audit logs |
 | 📊 **Production Architecture** | ✅ READY | PostgreSQL, WebSocket RPC, mTLS |
@@ -244,9 +244,9 @@ ATP serves as the **Security Foundation** for the emerging Agentic Web:
 
 | Protocol | Status | Integration | Value Prop |
 |----------|--------|-------------|------------|
-| **MCP (Anthropic)** | 🔄 This Week | Security Wrapper | First security for MCP tools |
-| **A2A (Google)** | 📋 Next Month | Trust Bridge | Add trust scores to agent discovery |
 | **Your Agent** | ✅ Ready | Simple SDK | Quantum-safe in 3 lines of code |
+| **MCP (Anthropic)** | 🔄 In Development | Security Wrapper | First security for MCP tools |
+| **A2A (Google)** | 📋 Roadmap | Trust Bridge | Add trust scores to agent discovery |
 | **ACP (IBM)** | 📋 Q1 2026 | Bridge | Enterprise compatibility |
 | **AGP (Cisco)** | 📋 Q1 2026 | Gateway | Network security |
 | **ANP** | 📋 Q2 2026 | Federation | Cross-domain agents |
@@ -770,7 +770,7 @@ ATP™ follows the **MongoDB OpenCore Model** with separated repositories:
 For **enterprise features, pricing, and sales information**, visit:
 - **Website**: [agent-trust-protocol-website](https://github.com/bigblackcoder/agent-trust-protocol-website)
 - **Live Demo**: https://480de8e2ca61.ngrok-free.app
-- **Contact**: sales@sovrlabs.com
+- **Contact**: sales@agenttrustprotocol.com
 
 ---
 
@@ -831,8 +831,17 @@ npm run test
   <a href="https://github.com/bigblackcoder/agent-trust-protocol">⭐ Star us on GitHub</a> •
   <a href="https://docs.agenttrustprotocol.com">📖 Documentation</a> •
   <a href="https://agenttrustprotocol.com">🏢 Enterprise</a> •
+  <a href="https://agenttrustprotocol.com/support">🤖 AI Support</a> •
   <a href="https://github.com/bigblackcoder/agent-trust-protocol/discussions">💬 Community</a>
 </p>
+
+## 🆘 **Need Help?**
+
+- **🤖 AI Support Agent:** [agenttrustprotocol.com/support](https://agenttrustprotocol.com/support) (24/7 instant help)
+- **📧 Enterprise Support:** support@agenttrustprotocol.com
+- **🛡️ Security Issues:** security@agenttrustprotocol.com
+- **💬 Community:** [GitHub Discussions](https://github.com/bigblackcoder/agent-trust-protocol/discussions)
+- **📋 Full Support Guide:** [SUPPORT.md](./SUPPORT.md)
 
 <p align="center">
   <img src="assets/images/atp-favicon-logo-agent.png" alt="ATP Agent Logo" width="100"/>
