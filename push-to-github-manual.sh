@@ -4,7 +4,7 @@
 # Ready to push 100% Production Ready system!
 
 echo "🎉 PUSHING AGENT TRUST PROTOCOL™ TO GITHUB"
-echo "Repository: https://github.com/bigblackcoder/agent-trust-protocol.git"
+echo "Repository: https://github.com/agent-trust-protocol/core.git"
 echo "Status: 100% Production Ready ✅"
 echo ""
 
@@ -61,6 +61,6 @@ git push origin main
 
 echo ""
 echo "✅ PUSH COMPLETE!"
-echo "🌐 Your repository is now live at: https://github.com/bigblackcoder/agent-trust-protocol.git"
+echo "🌐 Your repository is now live at: https://github.com/agent-trust-protocol/core.git"
 echo "🎯 Status: 100% Production Ready"
 echo "🏆 World's First Quantum-Safe AI Agent Protocol is now public!"

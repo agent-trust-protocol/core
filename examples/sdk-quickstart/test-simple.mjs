@@ -29,5 +29,5 @@ console.log('\n' + '=' .repeat(50));
 console.log('🎉 ATP SDK v1.0.0 is ready to use!');
 console.log('=' .repeat(50));
 console.log('\n🌐 Installation: npm install atp-sdk');
-console.log('📖 Documentation: https://github.com/bigblackcoder/agent-trust-protocol');
+console.log('📖 Documentation: https://github.com/agent-trust-protocol/core');
 console.log('🚀 Get started with the examples in this directory!\n');
