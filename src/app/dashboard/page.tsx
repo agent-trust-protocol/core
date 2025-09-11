@@ -1,4 +1,4 @@
-import { DemoDashboard } from "@/components/atp/demo-dashboard"
+import { SimpleDemoDashboard } from "@/components/atp/demo-dashboard-simple"
 import { Subnav } from "@/components/ui/subnav"
 import { Activity, Shield, Building2, BarChart3, GitBranch } from "lucide-react"
 import type { Metadata } from 'next'
@@ -90,7 +90,7 @@ export default function DashboardPage() {
           </div>
         </div>
         {/* Demo Dashboard - replacing live data */}
-        <DemoDashboard />
+        <SimpleDemoDashboard />
       </div>
     </div>
   )
